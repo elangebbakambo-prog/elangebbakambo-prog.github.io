@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Elange Bakambo — Développeur Web</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --blue: #3B82F6;
+      --blue-light: #60A5FA;
+      --violet: #7C3AED;
+      --violet-light: #A78BFA;
+      --violet-dark: #4C1D95;
+      --bg: #07060F;
+      --bg2: #0F0D1E;
+      --bg3: #16132A;
+      --text: #F0EDFF;
+      --muted: #9B8FC4;
+      --card: rgba(255,255,255,0.04);
+      --border: rgba(167,139,250,0.15);
+      --grad: linear-gradient(135deg, var(--blue), var(--violet));
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* NOISE OVERLAY */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* BACKGROUND BLOBS */
+    .blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.18;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .blob-1 {
+      width: 600px; height: 600px;
+      background: var(--violet);
+      top: -200px; left: -200px;
+      animation: drift1 12s ease-in-out infinite alternate;
+    }
+    .blob-2 {
+      width: 500px; height: 500px;
+      background: var(--blue);
+      bottom: -150px; right: -150px;
+      animation: drift2 10s ease-in-out infinite alternate;
+    }
+    .blob-3 {
+      width: 300px; height: 300px;
+      background: var(--violet-light);
+      top: 40%; left: 50%;
+      animation: drift3 14s ease-in-out infinite alternate;
+    }
+    @keyframes drift1 { to { transform: translate(80px, 60px); } }
+    @keyframes drift2 { to { transform: translate(-60px, -80px); } }
+    @keyframes drift3 { to { transform: translate(-40px, 60px); } }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.2rem 2.5rem;
+      background: rgba(7,6,15,0.7);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.2rem;
+      background: var(--grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.02em;
+    }
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.2s;
+      letter-spacing: 0.03em;
+    }
+    .nav-links a:hover { color: var(--violet-light); }
+
+    /* SECTIONS */
+    section {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 8rem 2rem 4rem;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 1rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(124,58,237,0.1);
+      font-size: 0.8rem;
+      color: var(--violet-light);
+      margin-bottom: 2rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      animation: fadeUp 0.6s ease both;
+    }
+    .hero-badge::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #22C55E;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.8); }
+    }
+    .hero h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(3rem, 8vw, 6rem);
+      font-weight: 800;
+      line-height: 1.0;
+      letter-spacing: -0.04em;
+      animation: fadeUp 0.6s 0.1s ease both;
+    }
+    .hero h1 .name {
+      background: var(--grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-subtitle {
+      margin-top: 1.5rem;
+      font-size: clamp(1rem, 2.5vw, 1.3rem);
+      color: var(--muted);
+      font-weight: 300;
+      max-width: 500px;
+      line-height: 1.6;
+      animation: fadeUp 0.6s 0.2s ease both;
+    }
+    .hero-subtitle strong {
+      color: var(--violet-light);
+      font-weight: 500;
+    }
+    .hero-cta {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      animation: fadeUp 0.6s 0.3s ease both;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.8rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'DM Sans', sans-serif;
+      letter-spacing: 0.01em;
+    }
+    .btn-primary {
+      background: var(--grad);
+      color: #fff;
+      border: none;
+    }
+    .btn-primary:hover { opacity: 0.85; transform: translateY(-2px); }
+    .btn-outline {
+      background: transparent;
+      color: var(--violet-light);
+      border: 1px solid var(--border);
+    }
+    .btn-outline:hover {
+      background: rgba(124,58,237,0.1);
+      border-color: var(--violet-light);
+      transform: translateY(-2px);
+    }
+
+    /* SCROLL INDICATOR */
+    .scroll-indicator {
+      margin-top: 4rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--muted);
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      animation: fadeUp 0.6s 0.5s ease both;
+    }
+    .scroll-line {
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(to bottom, var(--violet), transparent);
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+    @keyframes scrollPulse {
+      0%, 100% { transform: scaleY(1); opacity: 1; }
+      50% { transform: scaleY(0.6); opacity: 0.4; }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ABOUT */
+    .about {
+      padding: 6rem 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: center;
+    }
+    .section-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--violet-light);
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+    .section-title {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.8rem, 3vw, 2.5rem);
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.5rem;
+    }
+    .about-text {
+      color: var(--muted);
+      line-height: 1.8;
+      font-size: 1rem;
+      font-weight: 300;
+    }
+    .about-text p + p { margin-top: 1rem; }
+    .about-text strong { color: var(--text); font-weight: 500; }
+    .about-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 2rem;
+    }
+    .tag {
+      padding: 0.35rem 0.9rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      font-size: 0.8rem;
+      color: var(--muted);
+      font-weight: 500;
+    }
+    .about-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    .stat-card {
+      padding: 1.8rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .stat-card:hover {
+      border-color: var(--violet);
+      transform: translateY(-4px);
+    }
+    .stat-card.wide { grid-column: 1 / -1; }
+    .stat-number {
+      font-family: 'Syne', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 800;
+      background: var(--grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+      margin-bottom: 0.4rem;
+    }
+    .stat-label {
+      color: var(--muted);
+      font-size: 0.85rem;
+      font-weight: 300;
+    }
+
+    /* SKILLS */
+    .skills-section {
+      padding: 6rem 2rem;
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .skills-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .skills-header {
+      text-align: center;
+      margin-bottom: 3.5rem;
+    }
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+    }
+    .skill-card {
+      padding: 1.5rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      transition: all 0.2s;
+    }
+    .skill-card:hover {
+      border-color: var(--violet);
+      background: rgba(124,58,237,0.08);
+      transform: translateY(-3px);
+    }
+    .skill-icon {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      background: var(--grad);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+    }
+    .skill-name {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-bottom: 0.3rem;
+    }
+    .skill-level {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+    .skill-bar {
+      height: 3px;
+      background: var(--border);
+      border-radius: 999px;
+      margin-top: 0.8rem;
+      overflow: hidden;
+    }
+    .skill-bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: var(--grad);
+      transition: width 1s ease;
+    }
+
+    /* PROJECTS */
+    .projects-section {
+      padding: 6rem 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .projects-header {
+      text-align: center;
+      margin-bottom: 3.5rem;
+    }
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+    .project-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      overflow: hidden;
+      transition: all 0.25s;
+    }
+    .project-card:hover {
+      border-color: var(--violet);
+      transform: translateY(-6px);
+      box-shadow: 0 20px 60px rgba(124,58,237,0.15);
+    }
+    .project-top {
+      padding: 2rem 2rem 1.5rem;
+    }
+    .project-emoji {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+    .project-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1.15rem;
+      margin-bottom: 0.6rem;
+    }
+    .project-desc {
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.65;
+      font-weight: 300;
+    }
+    .project-footer {
+      padding: 1rem 2rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .project-techs {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+    .tech-chip {
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      background: rgba(124,58,237,0.15);
+      color: var(--violet-light);
+      font-size: 0.72rem;
+      font-weight: 600;
+    }
+    .project-link {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      transition: color 0.2s;
+    }
+    .project-link:hover { color: var(--violet-light); }
+
+    /* CONTACT */
+    .contact-section {
+      padding: 6rem 2rem;
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+    }
+    .contact-inner {
+      max-width: 700px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .contact-inner .section-title { margin-bottom: 1rem; }
+    .contact-inner p {
+      color: var(--muted);
+      font-weight: 300;
+      line-height: 1.7;
+      margin-bottom: 2.5rem;
+    }
+    .contact-links {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* FOOTER */
+    footer {
+      padding: 2rem;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.8rem;
+      border-top: 1px solid var(--border);
+    }
+
+    /* DIVIDER */
+    .divider {
+      width: 60px; height: 3px;
+      background: var(--grad);
+      border-radius: 999px;
+      margin: 0 auto 1.5rem;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .about {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+      }
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { gap: 1.2rem; }
+      .nav-links a { font-size: 0.8rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">EB</div>
+    <ul class="nav-links">
+      <li><a href="#about">À propos</a></li>
+      <li><a href="#skills">Compétences</a></li>
+      <li><a href="#projects">Projets</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-badge">Disponible en alternance · Bordeaux → Paris</div>
+    <h1>
+      <span class="name">Elange Bakambo</span><br/>
+      Développeur Web
+    </h1>
+    <p class="hero-subtitle">
+      Je construis des expériences web <strong>modernes et fonctionnelles</strong>.<br/>
+      Passionné de code et de création.
+    </p>
+    <div class="hero-cta">
+      <a href="#projects" class="btn btn-primary">Voir mes projets →</a>
+      <a href="https://github.com/elangebbakambo-prog" target="_blank" class="btn btn-outline">GitHub</a>
+    </div>
+    <div class="scroll-indicator">
+      <div class="scroll-line"></div>
+      Scroll
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="about" id="about">
+    <div>
+      <div class="section-label">À propos</div>
+      <h2 class="section-title">Développeur autodidacte,<br/>curieux et déterminé</h2>
+      <div class="about-text">
+        <p>
+          Depuis 2024, j'apprends le développement web en <strong>autodidacte</strong>, en construisant des projets concrets qui m'ont permis de maîtriser HTML, CSS, JavaScript, WordPress et les bases de React.
+        </p>
+        <p>
+          En parallèle, je suis <strong>danseur professionnel intermittent</strong> — une expérience qui m'a appris la discipline, la créativité et la capacité à performer sous pression.
+        </p>
+        <p>
+          Mon objectif : rejoindre Paris pour développer mes deux passions et intégrer une <strong>formation en alternance</strong> pour professionnaliser mes compétences web.
+        </p>
+      </div>
+      <div class="about-tags">
+        <span class="tag">Autonome</span>
+        <span class="tag">Curieux</span>
+        <span class="tag">Créatif</span>
+        <span class="tag">Résolution de problèmes</span>
+        <span class="tag">Apprentissage rapide</span>
+      </div>
+    </div>
+    <div class="about-stats">
+      <div class="stat-card">
+        <div class="stat-number">2+</div>
+        <div class="stat-label">Ans de pratique autodidacte</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">15+</div>
+        <div class="stat-label">Repos GitHub</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">5+</div>
+        <div class="stat-label">Projets concrets réalisés</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">💜</div>
+        <div class="stat-label">Passion pour le code</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section class="skills-section" id="skills">
+    <div class="skills-inner">
+      <div class="skills-header">
+        <div class="section-label">Compétences</div>
+        <div class="divider"></div>
+        <h2 class="section-title">Ma stack technique</h2>
+      </div>
+      <div class="skills-grid">
+        <div class="skill-card">
+          <div class="skill-icon">🌐</div>
+          <div class="skill-name">HTML5</div>
+          <div class="skill-level">Bon niveau</div>
+          <div class="skill-bar"><div class="skill-bar-fill" style="width:80%"></div></div>
+        </div>
+        <div class="skill-card">
+          <div class="skill-icon">🎨</div>
+          <div class="skill-name">CSS3</div>
+          <div class="skill-level">Bon niveau</div>
+          <div class="skill-bar"><div class="skill-bar-fill" style="width:80%"></div></div>
+        </div>
+        <div class="skill-card">
+          <div class="skill-icon">⚡</div>
+          <div class="skill-name">JavaScript</div>
+          <div class="skill-level">Bases solides</div>
+          <div class="skill-bar"><div class="skill-bar-fill" style="width:65%"></div></div>
+        </div>
+        <div class="skill-card">
+          <div class="skill-icon">⚛️</div>
+          <div class="skill-name">React</div>
+          <div class="skill-level">Débutant</div>
+          <div class="skill-bar"><div class="skill-bar-fill" style="width:30%"></div></div>
+        </div>
+        <div class="skill-card">
+          <div class="skill-icon">🐘</div>
+          <div class="skill-name">PHP</div>
+          <div class="skill-level">Bases</div>
+          <div class="skill-bar"><div class="skill-bar-fill" style="width:25%"></div></div>
+        </div>
+        <div class="skill-card">
+          <div class="skill-icon">🔷</div>
+          <div class="skill-name">WordPress</div>
+          <div class="skill-level">Bon niveau</div>
+          <div class="skill-bar"><div class="skill-bar-fill" style="width:75%"></div></div>
+        </div>
+        <div class="skill-card">
+          <div class="skill-icon">🐙</div>
+          <div class="skill-name">Git / GitHub</div>
+          <div class="skill-level">Commits, branches</div>
+          <div class="skill-bar"><div class="skill-bar-fill" style="width:55%"></div></div>
+        </div>
+        <div class="skill-card">
+          <div class="skill-icon">🔌</div>
+          <div class="skill-name">APIs REST</div>
+          <div class="skill-level">Bases</div>
+          <div class="skill-bar"><div class="skill-bar-fill" style="width:35%"></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section class="projects-section" id="projects">
+    <div class="projects-header">
+      <div class="section-label">Projets</div>
+      <div class="divider"></div>
+      <h2 class="section-title">Ce que j'ai construit</h2>
+    </div>
+    <div class="projects-grid">
+
+      <div class="project-card" style="border-color: rgba(124,58,237,0.4); background: rgba(124,58,237,0.06);">
+        <div class="project-top">
+          <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:1rem;">
+            <div class="project-emoji" style="margin-bottom:0;">🏆</div>
+            <span style="font-size:0.72rem; padding:0.2rem 0.7rem; border-radius:999px; background:linear-gradient(135deg,#3B82F6,#7C3AED); color:#fff; font-weight:700; letter-spacing:0.05em; text-transform:uppercase;">Projet client · En production</span>
+          </div>
+          <div class="project-title">AllMediaTraining.com</div>
+          <div class="project-desc">Plateforme complète de media training pour athlètes et professionnels. Thème WordPress 100% custom (amt-theme) développé from scratch. Système d'achat d'heures, réservation de séances avec vérification du solde, plugin PHP sur mesure avec gestion des jetons MyCred (remboursement automatique en cas d'annulation), boutique WooCommerce avec paiement en 4x, espace membre, menu burger mobile. Site réel en production avec 200+ clients.</div>
+        </div>
+        <div class="project-footer">
+          <div class="project-techs">
+            <span class="tech-chip">WordPress</span>
+            <span class="tech-chip">PHP</span>
+            <span class="tech-chip">WooCommerce</span>
+            <span class="tech-chip">MyCred</span>
+            <span class="tech-chip">Latepoint</span>
+            <span class="tech-chip">Stripe</span>
+          </div>
+          <a href="https://allmediatraining.com" target="_blank" class="project-link">Voir le site →</a>
+        </div>
+      </div>
+
+      <div class="project-card" style="border-color: rgba(59,130,246,0.4); background: rgba(59,130,246,0.06);">
+        <div class="project-top">
+          <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:1rem;">
+            <div class="project-emoji" style="margin-bottom:0;">💄</div>
+            <span style="font-size:0.72rem; padding:0.2rem 0.7rem; border-radius:999px; background:linear-gradient(135deg,#3B82F6,#7C3AED); color:#fff; font-weight:700; letter-spacing:0.05em; text-transform:uppercase;">Projet client · En production</span>
+          </div>
+          <div class="project-title">AnioLab.com</div>
+          <div class="project-desc">Site vitrine B2B premium bilingue (FR/EN) pour un créateur de marques cosmétiques clé en main, Europe & Afrique. Navigation multi-sections, formulaire de devis complet, intégration Calendly pour les RDV, WhatsApp Business, QR code personnalisé, mockups produits animés, FAQ interactive. Design premium haut de gamme.</div>
+        </div>
+        <div class="project-footer">
+          <div class="project-techs">
+            <span class="tech-chip">WordPress</span>
+            <span class="tech-chip">HTML/CSS</span>
+            <span class="tech-chip">JavaScript</span>
+            <span class="tech-chip">Bilingue</span>
+            <span class="tech-chip">Calendly</span>
+          </div>
+          <a href="https://aniolab.com" target="_blank" class="project-link">Voir le site →</a>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-top">
+          <div class="project-emoji">🔐</div>
+          <div class="project-title">Générateur de mots de passe</div>
+          <div class="project-desc">Application web générant des mots de passe sécurisés avec options de personnalisation : longueur, caractères spéciaux, majuscules. Gestion des événements DOM et logique de randomisation.</div>
+        </div>
+        <div class="project-footer">
+          <div class="project-techs">
+            <span class="tech-chip">JavaScript</span>
+            <span class="tech-chip">HTML/CSS</span>
+          </div>
+          <a href="https://github.com/elangebbakambo-prog" target="_blank" class="project-link">GitHub →</a>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-top">
+          <div class="project-emoji">🎨</div>
+          <div class="project-title">Générateur de couleurs aléatoires</div>
+          <div class="project-desc">Outil interactif affichant des couleurs aléatoires avec leur code HEX. Manipulation dynamique du DOM et des styles CSS en temps réel.</div>
+        </div>
+        <div class="project-footer">
+          <div class="project-techs">
+            <span class="tech-chip">JavaScript</span>
+            <span class="tech-chip">CSS</span>
+          </div>
+          <a href="https://github.com/elangebbakambo-prog" target="_blank" class="project-link">GitHub →</a>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-top">
+          <div class="project-emoji">📅</div>
+          <div class="project-title">Prototype système de réservation</div>
+          <div class="project-desc">Prototype JavaScript avec calcul automatique du prix selon la durée de séjour (60€/nuit), gestion et validation des dates. Logique de calcul avancée et interactions utilisateur — base qui a ensuite évolué vers le système de réservation d'AllMediaTraining.</div>
+        </div>
+        <div class="project-footer">
+          <div class="project-techs">
+            <span class="tech-chip">JavaScript</span>
+            <span class="tech-chip">HTML/CSS</span>
+          </div>
+          <a href="https://github.com/elangebbakambo-prog" target="_blank" class="project-link">GitHub →</a>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-top">
+          <div class="project-emoji">🧠</div>
+          <div class="project-title">Quiz JavaScript</div>
+          <div class="project-desc">Application quiz interactive avec gestion des scores, navigation entre questions et affichage dynamique des résultats. Logique de jeu complète en JavaScript vanilla.</div>
+        </div>
+        <div class="project-footer">
+          <div class="project-techs">
+            <span class="tech-chip">JavaScript</span>
+            <span class="tech-chip">HTML/CSS</span>
+          </div>
+          <a href="https://github.com/elangebbakambo-prog/quiz.js" target="_blank" class="project-link">GitHub →</a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="contact-section" id="contact">
+    <div class="contact-inner">
+      <div class="section-label">Contact</div>
+      <div class="divider"></div>
+      <h2 class="section-title">Travaillons ensemble</h2>
+      <p>Je suis disponible en alternance et ouvert à toute opportunité à Paris. N'hésitez pas à me contacter pour discuter d'un projet ou d'une collaboration.</p>
+      <div class="contact-links">
+        <a href="mailto:elange.bbakambo@gmail.com" class="btn btn-primary">✉ elange.bbakambo@gmail.com</a>
+        <a href="https://github.com/elangebbakambo-prog" target="_blank" class="btn btn-outline">GitHub</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2025 Elange Bakambo — Développeur Web · Bordeaux → Paris</p>
+  </footer>
+
+</body>
+</html>
